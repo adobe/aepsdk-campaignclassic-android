@@ -47,6 +47,11 @@ android {
 }
 
 dependencies {
+    implementation 'com.adobe.marketing.mobile:campaignclassic:2.0.0-SNAPSHOT'
+    implementation 'com.adobe.marketing.mobile:core:2.0.0-SNAPSHOT'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation "androidx.activity:activity:1.6.1"
+    implementation "androidx.fragment:fragment:1.5.5"
     implementation platform('com.google.firebase:firebase-bom:30.5.0')
     implementation 'com.google.firebase:firebase-messaging'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -55,8 +60,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    implementation project(":${rootProject.moduleProjectName}")
-    implementation 'com.github.adobe.aepsdk-core-android:core:dev-v2.0.0-SNAPSHOT'
-
-    implementation 'androidx.work:work-runtime-ktx:2.7.0'
 }

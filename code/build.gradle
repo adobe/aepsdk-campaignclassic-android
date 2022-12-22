@@ -14,10 +14,9 @@ import com.hierynomus.gradle.license.tasks.LicenseFormat
 buildscript {
     repositories {
         google()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
@@ -37,13 +36,10 @@ plugins {
 
 allprojects {
     repositories {
-        mavenCentral()
         google()
-        maven { url "https://jitpack.io"  }
-        mavenLocal()
-        flatDir {
-            dirs 'libs'
-        }
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     apply plugin: 'maven-publish'
     if (project.hasProperty("sonatypeUser") && project.hasProperty("sonatypePass")) {
