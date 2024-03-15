@@ -16,7 +16,7 @@ plugins {
 val mavenCoreVersion: String by project
 
 aepLibrary {
-    namespace = "com.adobe.marketing.mobile"
+    namespace = "com.adobe.marketing.mobile.campaignclassic"
     enableDokkaDoc = true
     enableSpotless = true
     enableCheckStyle = true
