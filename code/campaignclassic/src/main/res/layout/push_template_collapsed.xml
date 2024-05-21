@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:clipToPadding="false"
     android:clipChildren="false"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/DayNightTheme">
 
     <ImageView
         android:id="@+id/large_icon"
