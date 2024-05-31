@@ -23,7 +23,7 @@ public class CampaignClassic {
     private static final String LOG_TAG = "CampaignClassicExtension";
     private static final String SELF_TAG = "CampaignClassic";
 
-    static final String EXTENSION_VERSION = "2.1.7";
+    static final String EXTENSION_VERSION = "2.1.8";
     static final String REGISTER_DEVICE = "registerdevice";
     static final String TRACK_RECEIVE = "trackreceive";
     static final String TRACK_CLICK = "trackclick";

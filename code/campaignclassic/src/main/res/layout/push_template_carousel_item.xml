@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/carousel_container_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     android:clipChildren="false"
+    android:clipToPadding="false"
     android:orientation="vertical"
     android:theme="@style/DayNightTheme">
 
     <ImageView
         android:id="@+id/carousel_item_image_view"
-        android:layout_centerHorizontal="true"
-        android:layout_width="250dp"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_height="200dp" />
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:gravity="center_horizontal"
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/carousel_item_caption"
         style="@style/Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/carousel_item_image_view"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center" />
-</RelativeLayout>
+        android:layout_gravity="center"/>
+</LinearLayout>
