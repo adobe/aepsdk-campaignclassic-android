@@ -1,0 +1,31 @@
+{
+  "project_info": {
+    "project_number": "784633144159",
+    "project_id": "acc-push-test",
+    "storage_bucket": "acc-push-test.appspot.com"
+  },
+  "client": [{
+    "client_info": {
+      "mobilesdk_app_id": "1:784633144159:android:850220101e2db56de88cea",
+      "android_client_info": {
+        "package_name": "com.adobe.campaignclassictestapp"
+      }
+    },
+    "oauth_client": [{
+      "client_id": "784633144159-v1s8fp8fdtdcdkft888cind9v6i5og3r.apps.googleusercontent.com",
+      "client_type": 3
+    }],
+    "api_key": [{
+      "current_key": "AIzaSyAn68zb-YUDPY1qcsgkVbG3l8OqNsDQe_E"
+    }],
+    "services": {
+      "appinvite_service": {
+        "other_platform_oauth_client": [{
+          "client_id": "784633144159-v1s8fp8fdtdcdkft888cind9v6i5og3r.apps.googleusercontent.com",
+          "client_type": 3
+        }]
+      }
+    }
+  }],
+  "configuration_version": "1"
+}
