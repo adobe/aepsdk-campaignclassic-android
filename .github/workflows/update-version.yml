@@ -33,6 +33,14 @@ on:
         required: false
         default: ''
 
+      ui-library-dependency:
+        description: | 
+          If a version is provided, update UILibrary dependency in gradle.properties (ex: 1.2.3).
+          This is a published dependency in the pom.xml file.
+        type: string
+        required: false
+        default: ''
+
 jobs:
   update-versions:
     permissions:
@@ -42,6 +50,6 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
       branch: ${{ github.event.inputs.branch }}
-      dependencies: Core ${{ github.event.inputs.core-dependency }}
+      dependencies: Core ${{ github.event.inputs.core-dependency }}, UILibrary ${{ github.event.inputs.ui-library-dependency }}
       paths: code/gradle.properties, code/campaignclassic/src/phone/java/com/adobe/marketing/mobile/CampaignClassic.java
       update: true
