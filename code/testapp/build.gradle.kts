@@ -16,6 +16,7 @@ plugins {
 }
 
 val mavenCoreVersion: String by project
+val mavenLifecycleVersion: String by project
 
 android {
       namespace = "com.adobe.campaignclassictestapp"
