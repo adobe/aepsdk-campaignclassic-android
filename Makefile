@@ -29,7 +29,10 @@ checkstyle:
 
 checkformat:
 	(./code/gradlew -p code/$(EXTENSION-LIBRARY-FOLDER-NAME) spotlessCheck)
-			
+
+# Used by build and test CI workflow
+lint: checkstyle checkformat
+
 unit-test:
 	(./code/gradlew -p code/$(EXTENSION-LIBRARY-FOLDER-NAME) testPhoneDebugUnitTest)
 
