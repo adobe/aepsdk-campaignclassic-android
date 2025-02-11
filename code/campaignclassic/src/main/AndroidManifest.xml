@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Copyright 2022 Adobe. All rights reserved.
@@ -11,9 +12,7 @@
     governing permissions and limitations under the License.
 
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.adobe.marketing.mobile.campaignclassic" >
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application>
         <activity
@@ -22,5 +21,11 @@
             android:launchMode="singleInstance"
             android:theme="@style/CampaignClassic.Style.Transparent"/>
         <receiver android:name=".internal.CampaignClassicPushBroadcastReceiver" />
+        <service android:name="com.adobe.marketing.mobile.ExtensionDiscoveryService"
+            android:exported="false">
+            <meta-data
+                android:name="com.adobe.marketing.mobile.campaignclassic.internal.CampaignClassicExtension"
+                android:value="Extension" />
+        </service>
     </application>
 </manifest>
