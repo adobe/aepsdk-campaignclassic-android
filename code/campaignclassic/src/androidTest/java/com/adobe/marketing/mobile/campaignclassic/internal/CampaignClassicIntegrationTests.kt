@@ -748,39 +748,8 @@ class CampaignClassicIntegrationTests {
     // =================================================================================================================
     // void trackNotificationReceive(final Map<String, String> trackInfo)
     // =================================================================================================================
-
     @Test
-    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhenAllParametersArePresentV7() {
-        // setup
-        val countDownLatch = CountDownLatch(1)
-        val configurationLatch = CountDownLatch(1)
-        configurationAwareness { configurationLatch.countDown() }
-        setupConfiguration()
-
-        // test
-        CampaignClassic.trackNotificationReceive(
-            mapOf(
-                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to "testDeliveryId",
-                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID to "12345"
-            )
-        )
-
-        // verify
-        networkMonitor = { request ->
-            // verify network request url
-            val messageId = java.lang.String.format("%x", 12345)
-            Assert.assertEquals(
-                "https://testTrackingServer/r/?id=h$messageId,testDeliveryId,1",
-                request.url
-            )
-
-            countDownLatch.countDown()
-        }
-        Assert.assertTrue(countDownLatch.await(3, TimeUnit.SECONDS))
-    }
-
-    @Test
-    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhenBroadLogIdIs64BitV7() {
+    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhen64BitBroadLogId() {
         // setup
         val countDownLatch = CountDownLatch(1)
         val configurationLatch = CountDownLatch(1)
@@ -810,7 +779,67 @@ class CampaignClassicIntegrationTests {
     }
 
     @Test
-    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhenAllParametersArePresentV8() {
+    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhen32BitNegativeBroadLogId() {
+        // setup
+        val countDownLatch = CountDownLatch(1)
+        val configurationLatch = CountDownLatch(1)
+        configurationAwareness { configurationLatch.countDown() }
+        setupConfiguration()
+
+        // test
+        CampaignClassic.trackNotificationReceive(
+            mapOf(
+                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to "testDeliveryId",
+                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID to "-1709416000"
+            )
+        )
+
+        // verify
+        networkMonitor = { request ->
+            // verify network request url
+            val messageId = java.lang.String.format("%x", -1709416000)
+            Assert.assertEquals(
+                "https://testTrackingServer/r/?id=h$messageId,testDeliveryId,1",
+                request.url
+            )
+
+            countDownLatch.countDown()
+        }
+        Assert.assertTrue(countDownLatch.await(3, TimeUnit.SECONDS))
+    }
+
+    @Test
+    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhen32BitBroadLogId() {
+        // setup
+        val countDownLatch = CountDownLatch(1)
+        val configurationLatch = CountDownLatch(1)
+        configurationAwareness { configurationLatch.countDown() }
+        setupConfiguration()
+
+        // test
+        CampaignClassic.trackNotificationReceive(
+            mapOf(
+                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to "testDeliveryId",
+                CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID to "1709416000"
+            )
+        )
+
+        // verify
+        networkMonitor = { request ->
+            // verify network request url
+            val messageId = java.lang.String.format("%x", 1709416000)
+            Assert.assertEquals(
+                "https://testTrackingServer/r/?id=h$messageId,testDeliveryId,1",
+                request.url
+            )
+
+            countDownLatch.countDown()
+        }
+        Assert.assertTrue(countDownLatch.await(3, TimeUnit.SECONDS))
+    }
+
+    @Test
+    fun test_trackNotificationReceive_VerifyTrackNotificationReceiveRequestSentWhenAllParametersArePresentUUIDBroadlog() {
         // setup
         val countDownLatch = CountDownLatch(1)
         val configurationLatch = CountDownLatch(1)
@@ -1245,7 +1274,7 @@ class CampaignClassicIntegrationTests {
     }
 
     @Test
-    fun test_trackNotificationClick_VerifyTrackNotificationClickRequestSentWhenAllParametersArePresentV8() {
+    fun test_trackNotificationClick_VerifyTrackNotificationClickRequestSentWhenAllParametersArePresentUUID() {
         // setup
         val countDownLatch = CountDownLatch(1)
         val configurationLatch = CountDownLatch(1)
