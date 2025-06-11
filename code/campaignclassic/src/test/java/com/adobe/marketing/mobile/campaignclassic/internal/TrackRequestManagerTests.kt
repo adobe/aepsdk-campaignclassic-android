@@ -412,6 +412,124 @@ class TrackRequestManagerTests {
     }
 
     // =================================================================================================================
+    // 32-bit negative and 64-bit message id tests
+    // =================================================================================================================
+    @Test
+    fun handleTrackRequest_NotificationReceived_Negative32BitMessageId() {
+        // setup
+        setConfigurationSharedState()
+
+        // test
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "-673096100"),
+            CampaignClassicTestConstants.MESSAGE_RECEIVED_TAGID
+        )
+
+        // verify network call
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+
+        // verify url
+        val expectedUrl = "https://testTrackingServer/r/?id=h${java.lang.String.format("%x", -673096100)},testDeliveryId,1"
+        Assert.assertEquals(expectedUrl, networkRequestCaptor.value.url)
+        Assert.assertEquals(CampaignClassicTestConstants.DEFAULT_TIMEOUT, networkRequestCaptor.value.connectTimeout)
+        Assert.assertNull(networkRequestCaptor.value.body)
+    }
+
+    @Test
+    fun handleTrackRequest_NotificationReceived_32BitMessageId() {
+        // setup
+        setConfigurationSharedState()
+
+        // test
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "673096100"),
+            CampaignClassicTestConstants.MESSAGE_RECEIVED_TAGID
+        )
+
+        // verify network call
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+
+        // verify url
+        val expectedUrl = "https://testTrackingServer/r/?id=h${java.lang.String.format("%x", 673096100)},testDeliveryId,1"
+        Assert.assertEquals(expectedUrl, networkRequestCaptor.value.url)
+        Assert.assertEquals(CampaignClassicTestConstants.DEFAULT_TIMEOUT, networkRequestCaptor.value.connectTimeout)
+        Assert.assertNull(networkRequestCaptor.value.body)
+    }
+
+    @Test
+    fun handleTrackRequest_NotificationReceived_64BitMessageId() {
+        // setup
+        setConfigurationSharedState()
+
+        // test
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "57904851586134"),
+            CampaignClassicTestConstants.MESSAGE_RECEIVED_TAGID
+        )
+
+        // verify network call
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+
+        // verify url
+        val expectedUrl = "https://testTrackingServer/r/?id=h${java.lang.String.format("%x", 57904851586134)},testDeliveryId,1"
+        Assert.assertEquals(expectedUrl, networkRequestCaptor.value.url)
+        Assert.assertEquals(CampaignClassicTestConstants.DEFAULT_TIMEOUT, networkRequestCaptor.value.connectTimeout)
+        Assert.assertNull(networkRequestCaptor.value.body)
+    }
+
+    @Test
+    fun handleTrackRequest_NotificationReceived_64BitMessageId_MinimumValue() {
+        // setup
+        setConfigurationSharedState()
+
+        // test
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "2147483648"),
+            CampaignClassicTestConstants.MESSAGE_RECEIVED_TAGID
+        )
+
+        // verify network call
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+
+        // verify url
+        val expectedUrl = "https://testTrackingServer/r/?id=h${java.lang.String.format("%x", 2147483648)},testDeliveryId,1"
+        Assert.assertEquals(expectedUrl, networkRequestCaptor.value.url)
+        Assert.assertEquals(CampaignClassicTestConstants.DEFAULT_TIMEOUT, networkRequestCaptor.value.connectTimeout)
+        Assert.assertNull(networkRequestCaptor.value.body)
+    }
+
+    @Test
+    fun handleTrackRequest_NotificationReceived_64BitMessageId_MaxValue() {
+        // setup
+        setConfigurationSharedState()
+
+        // test
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "9223372036854775807"),
+            CampaignClassicTestConstants.MESSAGE_RECEIVED_TAGID
+        )
+
+        // verify network call
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+
+        // verify url
+        val expectedUrl = "https://testTrackingServer/r/?id=h${java.lang.String.format("%x", 9223372036854775807L)},testDeliveryId,1"
+        Assert.assertEquals(expectedUrl, networkRequestCaptor.value.url)
+        Assert.assertEquals(CampaignClassicTestConstants.DEFAULT_TIMEOUT, networkRequestCaptor.value.connectTimeout)
+        Assert.assertNull(networkRequestCaptor.value.body)
+    }
+
+    // =================================================================================================================
     // private methods
     // =================================================================================================================
 
