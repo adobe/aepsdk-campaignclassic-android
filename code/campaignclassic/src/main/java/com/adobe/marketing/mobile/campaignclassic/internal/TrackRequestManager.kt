@@ -102,11 +102,17 @@ internal class TrackRequestManager {
             return
         }
 
-        // V8 message Id is received in UUID format while V7 still comes as an integer(decimal) represented as a string.
-        // No transformation is required for the V8 UUID however for V7, message Id is parsed as an integer and converted to hex string.
+        // ACS to ACC migrated message ID's are received in UUID format. If the message ID is not a valid UUID, it is assumed to be a 32-bit or 64-bit decimal number.
+        // 32-bit message ID's can be negative, so we check for that and convert it to an integer then to hex format.
+        // Otherwise, we convert the positive 32-bit or 64-bit decimal number to a long and then to hex format.
         if (!messageId.isValidUUID()) {
             try {
-                messageId = java.lang.String.format("%x", messageId.toLong())
+                if (messageId.isNegative32BitDecimal()) {
+                    messageId = java.lang.String.format("%x", messageId.toInt())
+                } else {
+                    // positive 32-bit or 64-bit decimals are converted to long and then to hex
+                    messageId = java.lang.String.format("%x", messageId.toLong())
+                }
             } catch (ex: NumberFormatException) {
                 Log.debug(
                     CampaignClassicConstants.LOG_TAG,
@@ -196,5 +202,25 @@ internal class TrackRequestManager {
      */
     private fun String.isValidUUID(): Boolean {
         return UUID_PATTERN.matcher(this).matches()
+    }
+
+    /**
+     * Check if the [String] contains a negative 32-bit decimal number.
+     * A negative 32-bit decimal number starts with a '-' sign followed by digits only.
+     * The string is then parsed to an integer to ensure it fits within the 32-bit signed integer range.
+     *
+     * @return true if the string is a valid negative 32-bit decimal, false otherwise
+     */
+    private fun String.isNegative32BitDecimal(): Boolean {
+        return this.startsWith("-") && this.substring(1).isDigitsOnly() && this.toIntOrNull() != null
+    }
+
+    /**
+     * Check if the [String] contains only digits.
+     *
+     * @return true if the string contains only digits, false otherwise
+     */
+    private fun String.isDigitsOnly(): Boolean {
+        return this.all { it.isDigit() }
     }
 }

@@ -26,7 +26,7 @@ public class CampaignClassic {
      */
     public static final Class<? extends Extension> EXTENSION = CampaignClassicExtension.class;
 
-    public static final String EXTENSION_VERSION = "3.1.3";
+    public static final String EXTENSION_VERSION = "3.1.4";
     private static final String LOG_TAG = "CampaignClassicExtension";
     private static final String SELF_TAG = "CampaignClassic";
     static final String REGISTER_DEVICE = "registerdevice";
