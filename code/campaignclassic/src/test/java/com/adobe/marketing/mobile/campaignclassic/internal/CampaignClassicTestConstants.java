@@ -41,6 +41,8 @@ final class CampaignClassicTestConstants {
             static final String CAMPAIGNCLASSIC_MARKETING_SERVER =
                     "campaignclassic.marketingServer";
             static final String CAMPAIGNCLASSIC_TRACKING_SERVER = "campaignclassic.trackingServer";
+            static final String CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING =
+                    "campaignclassic.trackingEndpointsMapping";
             static final String CAMPAIGNCLASSIC_APP_INTEGRATION_KEY =
                     "campaignclassic.android.integrationKey";
             static final String CAMPAIGNCLASSIC_TIMEOUT = "campaignclassic.timeout";

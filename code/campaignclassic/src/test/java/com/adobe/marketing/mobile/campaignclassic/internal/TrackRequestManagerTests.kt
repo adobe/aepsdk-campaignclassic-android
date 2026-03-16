@@ -195,9 +195,9 @@ class TrackRequestManagerTests {
         // setup
         setConfigurationSharedState()
 
-        // test
+        // test: explicitly null track info (backwards compat - no track info in event)
         trackManager.handleTrackRequest(
-            getTrackRequestEvent(trackInfo = null),
+            getTrackRequestEvent(trackInfo = null, useExplicitTrackInfo = true),
             CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
         )
 
@@ -210,9 +210,9 @@ class TrackRequestManagerTests {
         // setup
         setConfigurationSharedState()
 
-        // test
+        // test: explicitly empty track info (backwards compat)
         trackManager.handleTrackRequest(
-            getTrackRequestEvent(trackInfo = emptyMap()),
+            getTrackRequestEvent(trackInfo = emptyMap(), useExplicitTrackInfo = true),
             CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
         )
 
@@ -530,14 +530,110 @@ class TrackRequestManagerTests {
     }
 
     // =================================================================================================================
+    // Tracking server selection by trackingInstanceId (_iNm) and backwards compatibility
+    // =================================================================================================================
+    //
+    // Backwards compatibility:
+    // - Null/empty track info: handleTrackRequest_NullTrackInfo, handleTrackRequest_EmptyTrackInfo (no network call).
+    // - Legacy payload without _iNm: handleTrackRequest_UsesTrackingServer_WhenTrackingInstanceIdIsNull (uses default trackingServer).
+    // - Config without trackingEndpointsMapping: handleTrackRequest_UsesTrackingServer_WhenTrackingEndpointsMapEmpty (fallback to trackingServer).
+    // - Unknown instance id: handleTrackRequest_UsesTrackingServer_WhenTrackingInstanceIdNotInMap (fallback to trackingServer).
+
+    @Test
+    fun handleTrackRequest_UsesTrackingServer_WhenTrackingInstanceIdIsNull() {
+        setConfigurationSharedState()
+
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(trackingInstanceId = null),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+        Assert.assertEquals("https://testTrackingServer/r/?id=h3039,testDeliveryId,2", networkRequestCaptor.value.url)
+    }
+
+    @Test
+    fun handleTrackRequest_UsesTrackingServer_WhenTrackingInstanceIdIsEmpty() {
+        setConfigurationSharedState()
+
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(trackingInstanceId = ""),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+        Assert.assertEquals("https://testTrackingServer/r/?id=h3039,testDeliveryId,2", networkRequestCaptor.value.url)
+    }
+
+    @Test
+    fun handleTrackRequest_UsesEndpointFromMap_WhenTrackingInstanceIdInMap() {
+        val mappingJson = """[{"identifier":"instance1","endpoint":"custom.endpoint.com"},{"identifier":"instance2","endpoint":"other.endpoint.com"}]"""
+        setConfigurationSharedState(trackingEndpointsMapping = mappingJson)
+
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(trackingInstanceId = "instance1"),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+        Assert.assertEquals("https://custom.endpoint.com/r/?id=h3039,testDeliveryId,2", networkRequestCaptor.value.url)
+    }
+
+    @Test
+    fun handleTrackRequest_UsesTrackingServer_WhenTrackingInstanceIdNotInMap() {
+        val mappingJson = """[{"identifier":"instance1","endpoint":"custom.endpoint.com"}]"""
+        setConfigurationSharedState(trackingEndpointsMapping = mappingJson)
+
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(trackingInstanceId = "unknownInstance"),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+        Assert.assertEquals("https://testTrackingServer/r/?id=h3039,testDeliveryId,2", networkRequestCaptor.value.url)
+    }
+
+    @Test
+    fun handleTrackRequest_UsesTrackingServer_WhenTrackingEndpointsMapEmpty() {
+        setConfigurationSharedState(trackingEndpointsMapping = null)
+
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(trackingInstanceId = "instance1"),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+
+        val networkRequestCaptor = ArgumentCaptor.forClass(NetworkRequest::class.java)
+        Mockito.verify(networkService, Mockito.times(1))
+            .connectAsync(networkRequestCaptor.capture(), ArgumentMatchers.any())
+        Assert.assertEquals("https://testTrackingServer/r/?id=h3039,testDeliveryId,2", networkRequestCaptor.value.url)
+    }
+
+    // =================================================================================================================
     // private methods
     // =================================================================================================================
 
     private fun setConfigurationSharedState(
         trackingServer: String? = "testTrackingServer",
         privacyStatus: MobilePrivacyStatus = MobilePrivacyStatus.OPT_IN,
-        timeout: Int = CampaignClassicTestConstants.DEFAULT_TIMEOUT
+        timeout: Int = CampaignClassicTestConstants.DEFAULT_TIMEOUT,
+        trackingEndpointsMapping: String? = null
     ) {
+        val configMap = mutableMapOf<String, Any?>(
+            CampaignClassicTestConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_SERVER to trackingServer,
+            CampaignClassicTestConstants.EventDataKeys.Configuration.GLOBAL_CONFIG_PRIVACY to privacyStatus.value,
+            CampaignClassicTestConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TIMEOUT to timeout
+        )
+        if (trackingEndpointsMapping != null) {
+            configMap[CampaignClassicTestConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING] = trackingEndpointsMapping
+        }
         Mockito.`when`(
             extensionApi.getSharedState(
                 ArgumentMatchers.eq(CampaignClassicTestConstants.EventDataKeys.Configuration.EXTENSION_NAME),
@@ -545,33 +641,40 @@ class TrackRequestManagerTests {
                 ArgumentMatchers.anyBoolean(),
                 ArgumentMatchers.any()
             )
-        ).thenReturn(
-            SharedStateResult(
-                SharedStateStatus.SET,
-                mapOf(
-                    CampaignClassicTestConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_SERVER to trackingServer,
-                    CampaignClassicTestConstants.EventDataKeys.Configuration.GLOBAL_CONFIG_PRIVACY to privacyStatus.value,
-                    CampaignClassicTestConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TIMEOUT to timeout
-                )
-            )
-        )
+        ).thenReturn(SharedStateResult(SharedStateStatus.SET, configMap))
     }
 
+    /**
+     * Builds a track request event.
+     * When [useExplicitTrackInfo] is false (default), [trackInfo] is ignored and a default map is built from
+     * [messageId], [deliveryId], and optionally [trackingInstanceId]. Use this for normal "has track info" cases.
+     * When [useExplicitTrackInfo] is true, [trackInfo] is used as-is (may be null or empty) for backwards-compat
+     * tests that verify behaviour when track info is missing.
+     */
+    @OptIn(ExperimentalStdlibApi::class)
     private fun getTrackRequestEvent(
         messageId: String? = "12345",
         deliveryId: String? = "testDeliveryId",
-        trackingInstanceId: String? = "1",
-        trackInfo: Map<String, String?>? = mapOf(
-            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID to messageId,
-            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to deliveryId,
-            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID to trackingInstanceId
-        )
+        trackingInstanceId: String? = null,
+        trackInfo: Map<String, String?>? = null,
+        useExplicitTrackInfo: Boolean = false
     ): Event {
+        val info = if (useExplicitTrackInfo) {
+            trackInfo
+        } else {
+            buildMap {
+                put(CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID, messageId)
+                put(CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID, deliveryId)
+                if (trackingInstanceId != null) {
+                    put(CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID, trackingInstanceId)
+                }
+            }
+        }
         return Event.Builder("Track Request", EventType.CAMPAIGN, EventSource.REQUEST_CONTENT)
             .setEventData(
                 mapOf(
                     CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_RECEIVE to true,
-                    CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO to trackInfo
+                    CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO to info
                 )
             )
             .build()
