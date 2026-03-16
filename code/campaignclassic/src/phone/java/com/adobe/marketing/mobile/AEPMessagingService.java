@@ -37,6 +37,7 @@ public class AEPMessagingService {
     static final String SELF_TAG = "AEPMessagingService";
     static final String TRACK_INFO_KEY_MESSAGE_ID = "_mId";
     static final String TRACK_INFO_KEY_DELIVERY_ID = "_dId";
+    static final String TRACK_INFO_KEY_TRACKING_INSTANCE_ID = "_iNm";
 
     /**
      * Builds an {@link CampaignClassicPushPayload} then constructs a {@link Notification} using the
@@ -105,6 +106,7 @@ public class AEPMessagingService {
                     {
                         put(TRACK_INFO_KEY_MESSAGE_ID, payload.getMessageId());
                         put(TRACK_INFO_KEY_DELIVERY_ID, payload.getDeliveryId());
+                        put(TRACK_INFO_KEY_TRACKING_INSTANCE_ID, payload.getTrackingInstanceId());
                     }
                 };
         CampaignClassic.trackNotificationReceive(trackInfo);

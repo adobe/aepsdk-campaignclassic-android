@@ -78,6 +78,20 @@ internal val Event.deliveryId: String?
         }
     }
 
+internal val Event.trackingInstanceId: String?
+    get() {
+        val trackingInstanceId = DataReader.optString(
+            trackingInfo,
+            CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID,
+            ""
+        )
+        return if (trackingInstanceId.isNullOrBlank()) {
+            null
+        } else {
+            trackingInstanceId
+        }
+    }
+
 /**
  * @return deviceToken [String] from the event data if available and not empty, null otherwise
  */

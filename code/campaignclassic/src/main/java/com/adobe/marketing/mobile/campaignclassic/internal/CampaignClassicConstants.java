@@ -55,6 +55,9 @@ final class CampaignClassicConstants {
             static final String CAMPAIGNCLASSIC_MARKETING_SERVER =
                     "campaignclassic.marketingServer";
             static final String CAMPAIGNCLASSIC_TRACKING_SERVER = "campaignclassic.trackingServer";
+            static final String CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING = "campaignclassic.trackingEndpointsMapping";
+            static final String CAMPAIGNCLASSIC_TRACKING_OBJECT_ID = "identifier";
+            static final String CAMPAIGNCLASSIC_TRACKING_OBJECT_ENDPOINT = "endpoint";
             static final String CAMPAIGNCLASSIC_APP_INTEGRATION_KEY =
                     "campaignclassic.android.integrationKey";
             static final String CAMPAIGNCLASSIC_TIMEOUT = "campaignclassic.timeout";
@@ -70,6 +73,7 @@ final class CampaignClassicConstants {
             static final String TRACK_INFO = "trackinfo";
             static final String TRACK_INFO_KEY_MESSAGE_ID = "_mId";
             static final String TRACK_INFO_KEY_DELIVERY_ID = "_dId";
+            static final String TRACK_INFO_KEY_TRACKING_INSTANCE_ID = "_iNm";
             static final String DEVICE_TOKEN = "devicetoken";
             static final String USER_KEY = "userkey";
             static final String ADDITIONAL_PARAMETERS = "additionalparameters";

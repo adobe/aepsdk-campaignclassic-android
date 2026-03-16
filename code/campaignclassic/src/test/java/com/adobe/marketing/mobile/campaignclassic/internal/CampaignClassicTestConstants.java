@@ -55,6 +55,7 @@ final class CampaignClassicTestConstants {
             static final String TRACK_INFO = "trackinfo";
             static final String TRACK_INFO_KEY_MESSAGE_ID = "_mId";
             static final String TRACK_INFO_KEY_DELIVERY_ID = "_dId";
+            static final String TRACK_INFO_KEY_TRACKING_INSTANCE_ID = "_iNm";
             static final String DEVICE_TOKEN = "devicetoken";
             static final String USER_KEY = "userkey";
             static final String ADDITIONAL_PARAMETERS = "additionalparameters";

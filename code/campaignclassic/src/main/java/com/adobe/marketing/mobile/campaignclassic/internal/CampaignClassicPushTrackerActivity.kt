@@ -159,10 +159,12 @@ internal class CampaignClassicPushTrackerActivity : Activity() {
         for (key in extras.keySet()) {
             val value = extras.getString(key)
             if (value != null) {
-                if (key == CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID) {
-                    trackInfo[key] = value
-                } else if (key == CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID) {
-                    trackInfo[key] = value
+                when (key) {
+                    CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID,
+                    CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID,
+                    CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID -> {
+                        trackInfo[key] = value
+                    }
                 }
             }
         }

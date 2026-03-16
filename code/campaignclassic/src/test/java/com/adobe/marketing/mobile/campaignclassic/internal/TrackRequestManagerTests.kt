@@ -560,9 +560,11 @@ class TrackRequestManagerTests {
     private fun getTrackRequestEvent(
         messageId: String? = "12345",
         deliveryId: String? = "testDeliveryId",
+        trackingInstanceId: String? = "1",
         trackInfo: Map<String, String?>? = mapOf(
             CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_MESSAGE_ID to messageId,
-            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to deliveryId
+            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_DELIVERY_ID to deliveryId,
+            CampaignClassicTestConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID to trackingInstanceId
         )
     ): Event {
         return Event.Builder("Track Request", EventType.CAMPAIGN, EventSource.REQUEST_CONTENT)

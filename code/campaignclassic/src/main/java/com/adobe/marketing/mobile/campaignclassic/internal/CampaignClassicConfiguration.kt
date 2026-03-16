@@ -15,8 +15,10 @@ import com.adobe.marketing.mobile.Event
 import com.adobe.marketing.mobile.ExtensionApi
 import com.adobe.marketing.mobile.MobilePrivacyStatus
 import com.adobe.marketing.mobile.SharedStateResolution
+import com.adobe.marketing.mobile.services.Log
 import com.adobe.marketing.mobile.util.DataReader
 import com.adobe.marketing.mobile.util.DataReaderException
+import org.json.JSONArray
 
 internal data class CampaignClassicConfiguration(val event: Event, val extensionApi: ExtensionApi) {
 
@@ -79,6 +81,46 @@ internal data class CampaignClassicConfiguration(val event: Event, val extension
             } else {
                 trackingServer
             }
+        }
+
+    /**
+     * @return configured CampaignClassics tracking server [String] if available, not null and not empty,
+     * and of type String, null otherwise
+     */
+    val trackingEndpointsMapping: String?
+        get() {
+            val trackingEndpointsMapping = DataReader.optString(
+                configSharedState,
+                CampaignClassicConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING,
+                null
+            )
+            return if (trackingEndpointsMapping.isNullOrBlank()) {
+                null
+            } else {
+                trackingEndpointsMapping
+            }
+        }
+
+    val trackingEndpointsMap: Map<String, String>
+        get() {
+            val result = mutableMapOf<String, String>()
+            val mappingStr = trackingEndpointsMapping
+            if (mappingStr.isNullOrBlank()) return result
+            try {
+                val jsonArray = JSONArray(mappingStr)
+                for (i in 0 until jsonArray.length()) {
+                    val obj = jsonArray.optJSONObject(i)
+                    val identifier = obj?.optString(CampaignClassicConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_OBJECT_ID)
+                    val endpoint = obj?.optString(CampaignClassicConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_OBJECT_ENDPOINT)
+                    if (!identifier.isNullOrBlank() && !endpoint.isNullOrBlank()) {
+                        result[identifier] = endpoint
+                    }
+                }
+            } catch (e: Exception) {
+                // Malformed JSON, return empty map
+                Log.debug(CampaignClassicConstants.LOG_TAG, "CampaignClassicConfiguration", "trackingEndpointsMappingMap: Malformed JSON")
+            }
+            return result
         }
 
     /**
