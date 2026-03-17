@@ -55,7 +55,8 @@ final class CampaignClassicConstants {
             static final String CAMPAIGNCLASSIC_MARKETING_SERVER =
                     "campaignclassic.marketingServer";
             static final String CAMPAIGNCLASSIC_TRACKING_SERVER = "campaignclassic.trackingServer";
-            static final String CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING = "campaignclassic.trackingEndpointsMapping";
+            static final String CAMPAIGNCLASSIC_TRACKING_ENDPOINT_MAPPING =
+                    "campaignclassic.trackingEndpointsMapping";
             static final String CAMPAIGNCLASSIC_TRACKING_OBJECT_ID = "identifier";
             static final String CAMPAIGNCLASSIC_TRACKING_OBJECT_ENDPOINT = "endpoint";
             static final String CAMPAIGNCLASSIC_APP_INTEGRATION_KEY =

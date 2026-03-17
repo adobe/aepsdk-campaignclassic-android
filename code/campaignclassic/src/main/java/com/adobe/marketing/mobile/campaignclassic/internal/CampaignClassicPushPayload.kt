@@ -70,7 +70,6 @@ internal class CampaignClassicPushPayload {
         }
         trackingInstanceId = remoteMessageData[CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID]
 
-
         this.messageData = remoteMessageData.toMutableMap()
 
         // get the tag from the payload. if no tag was present in the payload use the message id

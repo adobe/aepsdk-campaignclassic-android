@@ -126,7 +126,7 @@ internal class TrackRequestManager {
         }
         val trackingInstanceId = event.trackingInstanceId
         // create URL
-        val trackEndpoint: String = if(trackingInstanceId.isNullOrEmpty()) {
+        val trackEndpoint: String = if (trackingInstanceId.isNullOrEmpty()) {
             trackingServer
         } else {
             configData.trackingEndpointsMap[trackingInstanceId] ?: trackingServer
