@@ -21,6 +21,7 @@ internal class CampaignClassicPushPayload {
     val messageData: MutableMap<String?, String?>
     val messageId: String?
     val deliveryId: String?
+    val trackingInstanceId: String?
     var tag: String?
 
     private val ACC_PAYLOAD_BODY = "_msg"
@@ -67,6 +68,7 @@ internal class CampaignClassicPushPayload {
         if (deliveryId.isNullOrEmpty()) {
             throw IllegalArgumentException("Failed to create CampaignClassicPushPayload, delivery id is null or empty.")
         }
+        trackingInstanceId = remoteMessageData[CampaignClassicConstants.EventDataKeys.CampaignClassic.TRACK_INFO_KEY_TRACKING_INSTANCE_ID]
 
         this.messageData = remoteMessageData.toMutableMap()
 

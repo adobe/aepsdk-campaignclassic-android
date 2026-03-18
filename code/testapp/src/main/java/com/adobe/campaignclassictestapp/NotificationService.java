@@ -30,6 +30,7 @@ public class NotificationService extends FirebaseMessagingService {
 	private static String LOG_TAG = "NotificationService";
 	private static String DELIVERYID = "_dId";
 	private static String MESSAGEID = "_mId";
+	private static String TRACKING_INSTANCE_ID = "_iNm";
 	private static String NOTIFICATION_TEXT = "notificationText";
 	private static String NOTIFICATION_URL = "NotificationUrl";
 
@@ -67,9 +68,11 @@ public class NotificationService extends FirebaseMessagingService {
 		String url = payloadData.get("url");
 		String messageId = payloadData.get(MESSAGEID);
 		String deliveryId = payloadData.get(DELIVERYID);
+		String trackingInstanceId = payloadData.get(TRACKING_INSTANCE_ID);
 		Map<String, String> trackInfo = new HashMap<>();
 		trackInfo.put(MESSAGEID, messageId);
 		trackInfo.put(DELIVERYID, deliveryId);
+		trackInfo.put(TRACKING_INSTANCE_ID, trackingInstanceId);
 		CampaignClassic.trackNotificationReceive(trackInfo);
 
 
@@ -92,6 +95,7 @@ public class NotificationService extends FirebaseMessagingService {
 		intent.putExtra(NOTIFICATION_URL, url);
 		intent.putExtra(DELIVERYID, deliveryId);
 		intent.putExtra(MESSAGEID, messageId);
+		intent.putExtra(TRACKING_INSTANCE_ID, trackingInstanceId);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
 		PendingIntent pendingIntent;

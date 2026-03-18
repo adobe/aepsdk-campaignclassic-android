@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 	private static String LOG_TAG = "MainActivity";
 	private static String DELIVERYID = "_dId";
 	private static String MESSAGEID = "_mId";
+	private static String TRACKING_INSTANCE_ID = "_iNm";
 	private TextView notificationPermission;
 
 	@Override
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 				if (key.equals(MESSAGEID)) {
 					trackInfo.put(key, value.toString());
 				} else if (key.equals(DELIVERYID)) {
+					trackInfo.put(key, value.toString());
+				} else if (key.equals(TRACKING_INSTANCE_ID)) {
 					trackInfo.put(key, value.toString());
 				}
 			}
