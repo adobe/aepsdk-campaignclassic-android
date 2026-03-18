@@ -111,6 +111,29 @@ class CampaignClassicConfigurationTests {
         Assert.assertEquals("https://ep2.com", config.trackingEndpointsMap["inst2"])
     }
 
+    /**
+     * Array elements that are not JSON objects: optJSONObject(i) is null;
+     */
+    @Test
+    fun trackingEndpointsMap_ArrayOfPrimitives_EmptyMap() {
+        setConfigurationSharedState(trackingEndpointsMapping = "[1,2,3]")
+
+        val config = CampaignClassicConfiguration(event, extensionApi)
+
+        Assert.assertTrue(config.trackingEndpointsMap.isEmpty())
+    }
+
+    @Test
+    fun trackingEndpointsMap_MixedObjectsAndPrimitives_ParsesOnlyObjects() {
+        val mappingJson = """[1,"x",{"identifier":"ok","endpoint":"https://ok.com"}]"""
+        setConfigurationSharedState(trackingEndpointsMapping = mappingJson)
+
+        val config = CampaignClassicConfiguration(event, extensionApi)
+
+        Assert.assertEquals(1, config.trackingEndpointsMap.size)
+        Assert.assertEquals("https://ok.com", config.trackingEndpointsMap["ok"])
+    }
+
     private fun setConfigurationSharedState(trackingEndpointsMapping: String? = null) {
         val configMap = mutableMapOf<String, Any?>(
             CampaignClassicConstants.EventDataKeys.Configuration.CAMPAIGNCLASSIC_TRACKING_SERVER to "defaultServer"

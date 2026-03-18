@@ -297,6 +297,41 @@ class TrackRequestManagerTests {
     }
 
     @Test
+    fun handleTrackRequest_MessageIdNegativeWithNonDigitSuffix_NoNetwork() {
+        setConfigurationSharedState()
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "-12ab34"),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+        Mockito.verifyNoInteractions(networkService)
+    }
+
+    @Test
+    fun handleTrackRequest_MessageIdSingleMinus_NoNetwork() {
+        setConfigurationSharedState()
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(messageId = "-"),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+        Mockito.verifyNoInteractions(networkService)
+    }
+
+    @Test
+    fun handleTrackRequest_NetworkCallbackWithNullConnection_DoesNotCrash() {
+        setConfigurationSharedState()
+        Mockito.`when`(networkService.connectAsync(ArgumentMatchers.any(), ArgumentMatchers.any()))
+            .thenAnswer { invocation ->
+                (invocation.arguments[1] as NetworkCallback).call(null)
+                null
+            }
+        trackManager.handleTrackRequest(
+            getTrackRequestEvent(),
+            CampaignClassicTestConstants.MESSAGE_CLICKED_TAGID
+        )
+        Mockito.verify(networkService, Mockito.times(1)).connectAsync(ArgumentMatchers.any(), ArgumentMatchers.any())
+    }
+
+    @Test
     fun handleTrackRequest_TrackInfoNullMessageIdKey() {
         // setup
         setConfigurationSharedState()
