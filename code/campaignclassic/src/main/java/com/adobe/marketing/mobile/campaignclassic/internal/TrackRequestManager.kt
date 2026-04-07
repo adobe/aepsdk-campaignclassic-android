@@ -73,15 +73,6 @@ internal class TrackRequestManager {
             return
         }
 
-        val trackingServer = configData.trackingServer ?: run {
-            Log.debug(
-                CampaignClassicConstants.LOG_TAG,
-                SELF_TAG,
-                "handleTrackRequest - Failed to process TrackNotification request, Configuration not available."
-            )
-            return
-        }
-
         val deliveryId = event.deliveryId ?: run {
             Log.debug(
                 CampaignClassicConstants.LOG_TAG,
@@ -125,10 +116,25 @@ internal class TrackRequestManager {
             }
         }
 
+        val trackingServer = configData.trackingServer ?: run {
+            Log.debug(
+                CampaignClassicConstants.LOG_TAG,
+                SELF_TAG,
+                "handleTrackRequest - Failed to process TrackNotification request, Configuration not available."
+            )
+            return
+        }
+        val trackingInstanceId = event.trackingInstanceId
         // create URL
+        val trackEndpoint: String = if (trackingInstanceId.isNullOrEmpty()) {
+            trackingServer
+        } else {
+            configData.trackingEndpointsMap[trackingInstanceId] ?: trackingServer
+        }
+
         val trackUrl = java.lang.String.format(
             CampaignClassicConstants.TRACKING_API_URL_BASE,
-            trackingServer,
+            trackEndpoint,
             messageId,
             deliveryId,
             tagId
